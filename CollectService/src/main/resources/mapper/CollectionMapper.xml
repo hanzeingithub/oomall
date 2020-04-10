@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.oomall.mapper.CollectionMapper">
+    <select id="findCollect" resultType="xmu.oomall.domain.collectitem.CollectItemPo">
+        select id,
+            goods_id,
+               user_id
+        from oomall_collect_item
+        <where>
+            <if test="userId != null">
+                user_id=#{userId}
+            </if>
+            <if test="goodsId != null">
+                and goods_id=#{goodsId}
+            </if>
+            limit #{start},#{limit}
+        </where>
+    </select>
+    <insert id="addCollectItem" parameterType="xmu.oomall.domain.collectitem.CollectItemPo" useGeneratedKeys="true" keyProperty="id">
+        <selectKey resultType="Integer" order="AFTER" keyProperty="collectItem.id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into oomall_collect_item(goods_id,user_id)
+        values(#{collectItem.goodsId},#{collectItem.userId})
+    </insert>
+    <delete id="deleteCollectionById" parameterType="Integer">
+        delete from oomall_collect_item
+        where id=#{id}
+    </delete>
+</mapper>
