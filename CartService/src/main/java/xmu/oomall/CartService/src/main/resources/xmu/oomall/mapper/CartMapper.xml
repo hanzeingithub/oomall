@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.oomall.mapper.CartMapper">
+    <!--    List<CartItem> listCartItem(@Param("userId")Integer userId);-->
+    <select id="listCartItem" parameterType="Integer" resultType="xmu.oomall.domain.cart.CartItem">
+        select id,
+            user_id,
+            product_id,
+            is_check as be_check,
+            number
+        from oomall_cart_item
+        <where>
+            <if test="userId != null">
+                user_id=#{userId}
+            </if>
+            <if test="productId != null">
+                and product_id=#{productId}
+            </if>
+        </where>
+    </select>
+    <!--    CartItem getCartItem(@Param("id")Integer id);-->
+    <select id="getCartItem" parameterType="Integer" resultType="xmu.oomall.domain.cart.CartItem">
+        select id,
+            user_id,
+            product_id,
+            is_check as be_check,
+            number
+        from oomall_cart_item
+        where id=#{id}
+    </select>
+    <!--    int addCartItem(@Param("cartItem")CartItem cartItem);-->
+    <insert id="addCartItem" parameterType="xmu.oomall.domain.cart.CartItem" useGeneratedKeys="true" keyProperty="id">
+        <selectKey resultType="Integer" order="AFTER" keyProperty="cartItem.id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into oomall_cart_item(id,user_id,product_id,is_check,number)
+        values(#{cartItem.id},#{cartItem.userId},#{cartItem.productId},#{cartItem.beCheck},#{cartItem.number})
+    </insert>
+    <delete id="deleteCartItem" parameterType="Integer">
+        delete from oomall_cart_item
+        where id=#{cartId}
+    </delete>
+
+    <update id="updateCartItem" parameterType="xmu.oomall.domain.cart.CartItem">
+        update oomall_cart_item set
+        <if test="cartItem.productId!=null">
+            product_id=#{cartItem.productId},
+        </if>
+        <if test="cartItem.beCheck!=null">
+            is_check=#{cartItem.beCheck},
+        </if>
+        <if test="cartItem.number!=null">
+            number=#{cartItem.number}
+        </if>
+        where id=#{cartItem.id}
+    </update>
+</mapper>
