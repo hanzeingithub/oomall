@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.oomall.mapper.BrandMapper">
+    <insert id="insertBrand" parameterType="xmu.oomall.domain.goods.BrandPo" useGeneratedKeys="true" keyProperty="id">
+        <selectKey resultType="Integer" order="AFTER" keyProperty="brand.id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into oomall_brand(name,description,pic_url,gmt_create,gmt_modified,is_deleted)
+        values(#{brand.name},#{brand.description},#{brand.picUrl},#{brand.gmtCreate},#{brand.gmtModified},#{brand.beDeleted})
+    </insert>
+    <update id="updateBrand">
+        update oomall_brand set
+        <if test="brand.name != null">
+            name =#{brand.name},
+        </if>
+        <if test="brand.description != null">
+            description=#{brand.description},
+        </if>
+        <if test="brand.picUrl != null">
+            pic_url=#{brand.picUrl},
+        </if>
+        where id=#{brand.id} and is_deleted=0
+    </update>
+    <update id="deleteBrand" parameterType="Integer">
+        update oomall_brand set
+            is_deleted='1'
+        where id=#{id} and is_deleted='0';
+    </update>
+    <select id="listBrands" parameterType="Integer" resultType="xmu.oomall.domain.goods.BrandPo">
+        select id,
+        name,
+        description,
+        pic_url,
+        gmt_create,
+        gmt_modified,
+        is_deleted as be_deleted
+        from oomall_brand
+        <where>
+            is_deleted=false
+            <if test="id !=null">
+                and id=#{id}
+            </if>
+            <if test="name != '' ">
+                and name=#{name}
+            </if>
+            <if test="id==null and name== '' ">
+                and 1
+            </if>
+        </where>
+        limit #{start},#{limit}
+    </select>
+    <select id="getBrandById" parameterType="Integer" resultType="xmu.oomall.domain.goods.BrandPo">
+        select id,
+        name,
+        description,
+        pic_url,
+        gmt_create,
+        gmt_modified,
+        is_deleted as be_deleted
+        from oomall_brand
+        <where>
+            is_deleted=false
+            <if test="id !=null">
+                and id=#{id}
+            </if>
+            <if test="id ==null">
+                and 1
+            </if>
+        </where>
+    </select>
+    <select id="listGoodsByBrandId" resultType="xmu.oomall.domain.goods.GoodsPo">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status as status_code,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        is_deleted as be_deleted,
+        weight,
+        volume,
+        special_freight_id,
+        is_special as be_special,
+        is_deleted as be_deleted,
+        price
+        from oomall_goods
+        <where>
+            <if test="brandId != null">
+                brand_id=#{brandId}
+            </if>
+            and is_deleted=false
+        </where>
+    </select>
+</mapper>

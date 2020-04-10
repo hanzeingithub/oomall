@@ -1,0 +1,32 @@
+#指定注册中心地址
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://47.100.91.153:3500/eureka/
+  instance:
+    prefer-ip-address: true
+#    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    #    ip-address: 127.0.0.1
+    #    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+    #    lease-expiration-duration-in-seconds: 90
+    #    lease-renewal-interval-in-seconds: 30
+    ip-address: 192.168.102.11
+#    ip-address: 172.17.1.209
+#    lease-expiration-duration-in-seconds: 90
+#    lease-renewal-interval-in-seconds: 30
+#    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+#    ip-address: ${spring.cloud.client.ip-address}
+feign:
+  hystrix:
+    enabled: false
+  client:
+    config:
+      share:
+        connectTimeout: 120000
+        readTimeout: 120000
+  compression:
+    request:
+      enabled: true
+      mime-types: text/html,application/xml,application/json
+    response:
+      enabled: true

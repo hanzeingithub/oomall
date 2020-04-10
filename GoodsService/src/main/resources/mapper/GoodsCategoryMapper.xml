@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.oomall.mapper.GoodsCategoryMapper">
+    <insert id="insertGoodsCategory" keyProperty="id" useGeneratedKeys="true" >
+        <selectKey resultType="Integer" order="AFTER" keyProperty="goodsCategory.id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into oomall_goods_category(name, pid)
+        values(#{goodsCategory.name}, #{goodsCategory.pid})
+    </insert>
+    <update id="updateGoodsCategory">
+        update oomall_goods_category
+        <set>
+            <if test="goodsCategory.name != null">
+                name=#{goodsCategory.name},
+            </if>
+            <if test="goodsCategory.pid != null">
+                pid=#{goodsCategory.pid},
+            </if>
+            <if test="goodsCategory.picUrl!=null">
+                pic_url=#{oomall_goods_category},
+            </if>
+        </set>
+        where id=#{goodsCategory.id} and is_deleted='0';
+    </update>
+    <update id="deleteCategory">
+        update oomall_goods_category
+        set is_deleted = 1
+        where id=#{id} and is_deleted=0
+    </update>
+    <update id="updateLevel2" parameterType="Integer">
+        update oomall_goods_category
+        set pid = 0
+        where pid = #{id}
+    </update>
+    <select id="listGoodsCategories" parameterType="Integer" resultType="xmu.oomall.domain.goods.GoodsCategoryPo">
+        select id,
+               name,
+               pid,
+               pic_url
+        from oomall_goods_category
+        where is_deleted=0 and pid=#{pid}
+        limit #{start},#{limit}
+    </select>
+    <select id="getGoodsCategoryById" parameterType="Integer" resultType="xmu.oomall.domain.goods.GoodsCategoryPo">
+        select id,
+               name,
+               pid,
+               pic_url
+        from oomall_goods_category
+        where id=#{id} and is_deleted='0'
+    </select>
+</mapper>

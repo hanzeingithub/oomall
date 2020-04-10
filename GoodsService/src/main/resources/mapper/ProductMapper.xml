@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.oomall.mapper.ProductMapper">
+    <select id="listProductsByGoodsId" resultType="xmu.oomall.domain.goods.ProductPo">
+        select id,
+            pic_url,
+            specifications,
+            goods_id,
+            price,
+            safety_stock,
+            is_deleted as be_deleted
+        from oomall_product where goods_id=#{goodsId} and is_deleted=0
+    </select>
+    <select id="getProductPo" resultType="xmu.oomall.domain.goods.ProductPo">
+        select id,
+            pic_url,
+            specifications,
+            goods_id,
+            price,
+            safety_stock,
+            is_deleted as be_deleted
+        from oomall_product where id=#{id} and is_deleted=0
+    </select>
+    <insert id="insertProduct" keyProperty="id" useGeneratedKeys="true" parameterType="java.util.List">
+        <selectKey resultType="Integer" order="AFTER" keyProperty="product.id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into oomall_product(pic_url, specifications, goods_id, price, safety_stock, is_deleted)
+        values
+            (#{product.picUrl},
+            #{product.specifications},
+            #{product.goodsId},
+            #{product.price},
+            #{product.safetyStock},
+            #{product.beDeleted})
+    </insert>
+    <update id="updateProduct">
+        update oomall_product set
+            <if test="product.price != null">
+                price = #{product.price},
+            </if>
+            <if test="product.picUrl != null">
+                pic_url = #{product.picUrl},
+            </if>
+            <if test="product.specifications != null">
+                specifications = #{product.specifications},
+            </if>
+            <if test="product.safetyStock != null">
+                safety_stock = #{product.safetyStock}
+            </if>
+        where id=#{product.id} and is_deleted=0
+    </update>
+    <update id="deleteProductById" parameterType="java.util.List">
+        update oomall_product
+        set is_deleted=1
+        <where>
+            <if test="id!=null">
+                id=#{id}
+            </if>
+            <if test="goodsId!=null">
+                goods-id=#{goodsId}
+            </if>
+        </where>
+    </update>
+</mapper>

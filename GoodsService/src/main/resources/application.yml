@@ -1,0 +1,43 @@
+spring:
+  profiles:
+    active: log,db,jicheng
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://101.132.152.28:3306/oomall
+#    username: oomall
+#    password: OOAD3-4wmtnl
+    url: jdbc:mysql://47.98.145.177:3306/oomall?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      #初始化时建立物理连接的个数
+      initial-size: 1
+      #  最小连接池数量
+      min-idle: 1
+      #最大连接池数量
+      max-active: 5
+      #获取连接时最大等待时间
+      max-wait: 60000
+      filter:
+        stat:
+          #是否开启慢sql查询监控
+          log-slow-sql: true
+          #慢SQL执行时间
+          slow-sql-millis: 100
+      validation-query: select 1
+  application:
+    name: goodsinfoservice
+mybatis:
+  #domain对象的包
+  type-aliases-package: xmu.oomall.domain
+  #mapper.xml所在的位置
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    # 开启驼峰命名转换，如：Table(create_time) -> Entity(createTime)。不需要我们关心怎么进行字段匹配，mybatis会自动识别`大写字母与下划线`
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    cache-enabled: true
+
+server:
+  port: 3090

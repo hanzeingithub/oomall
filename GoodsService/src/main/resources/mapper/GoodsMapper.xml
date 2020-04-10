@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xmu.oomall.mapper.GoodsMapper">
+    <select id="getGoodsById" resultType="xmu.oomall.domain.goods.GoodsPo">
+        select id,
+            name,
+            goods_sn,
+            short_name,
+            description,
+            brief,
+            pic_url,
+            detail,
+            status as status_code,
+            share_url,
+            gallery,
+            goods_category_id,
+            brand_id,
+            is_deleted as be_deleted,
+            weight,
+            volume,
+            special_freight_id,
+            is_special as be_special,
+            is_deleted as be_deleted,
+            price
+        from oomall_goods where id=#{id} and is_deleted=0
+    </select>
+<!--    只能给用户服务-->
+    <select id="listGoodsByBrandAndCategory" resultType="xmu.oomall.domain.goods.GoodsPo">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status as status_code,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        is_deleted as be_deleted,
+        weight,
+        volume,
+        special_freight_id,
+        is_special as be_special,
+        is_deleted as be_deleted,
+        price
+        from oomall_goods
+        <where>
+            <if test="brandId != null">
+                brand_id=#{brandId}
+            </if>
+            <if test="categoryId != null">
+                and goods_category_id=#{categoryId}
+            </if>
+            <if test="1">
+                and status != 0
+            </if>
+        </where>
+        and is_deleted=0
+        limit #{start},#{limit}
+    </select>
+    <select id="initializeRedis" resultType="xmu.oomall.domain.goods.GoodsPo">
+        select id,
+            name,
+            goods_sn,
+            short_name,
+            description,
+            brief,
+            pic_url,
+            detail,
+            status as status_code,
+            share_url,
+            gallery,
+            goods_category_id,
+            brand_id,
+            is_deleted as be_deleted,
+            weight,
+            volume,
+            special_freight_id,
+            is_special as be_special,
+            is_deleted as be_deleted,
+            price
+        from oomall_goods where status != 0 and is_deleted=0 and status != 1
+    </select>
+    <select id="listGoodsByName" resultType="xmu.oomall.domain.goods.GoodsPo">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status as status_code,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        is_deleted as be_deleted,
+        weight,
+        volume,
+        special_freight_id,
+        is_special as be_special,
+        is_deleted as be_deleted,
+        price
+        from oomall_goods
+        <where>
+            <if test="name != null">
+                name like '${name}%'
+            </if>
+            <if test="1">
+                and status != 0
+            </if>
+        </where>
+        and is_deleted=0
+        limit #{start},#{limit}
+    </select>
+<!--    只能给管理员使用-->
+    <select id="listGoodsByQuery" resultType="xmu.oomall.domain.goods.GoodsPo">
+        select id,
+        name,
+        goods_sn,
+        short_name,
+        description,
+        brief,
+        pic_url,
+        detail,
+        status as status_code,
+        share_url,
+        gallery,
+        goods_category_id,
+        brand_id,
+        is_deleted as be_deleted,
+        weight,
+        volume,
+        special_freight_id,
+        is_special as be_special,
+        is_deleted as be_deleted,
+        price
+        from oomall_goods
+        <where>
+            <if test="goodsSn != null">
+                goods_sn like '${goodsSn}%'
+            </if>
+            <if test="name != null">
+                and name like '${name}%'
+            </if>
+            and is_deleted=0
+        </where>
+        limit #{start},#{limit}
+    </select>
+    <update id="updateGoods">
+        update oomall_goods set
+        <if test="goods.name != null">
+            name = #{goods.name},
+        </if>
+        <if test="goods.shortName != null">
+            short_name = #{goods.shortName},
+        </if>
+        <if test="goods.description != null">
+            description = #{goods.description},
+        </if>
+        <if test="goods.brief != null">
+            brief = #{goods.brief},
+        </if>
+        <if test="goods.picUrl != null">
+            pic_url = #{goods.picUrl},
+        </if>
+        <if test="goods.detail != null">
+            detail = #{goods.detail},
+        </if>
+        <if test="goods.statusCode != null">
+            status = #{goods.statusCode},
+        </if>
+        <if test="goods.shareUrl">
+            share_url = #{goods.shareUrl},
+        </if>
+        <if test="goods.gallery != null">
+            gallery = #{goods.gallery},
+        </if>
+        <if test="goods.weight != null">
+            weight=#{goods.weight},
+        </if>
+        <if test="goods.goodsCategoryId != null">
+            goods_category_id=#{goods.goodsCategoryId},
+        </if>
+        <if test="goods.brandId != null">
+            brand_id=#{goods.brandId},
+        </if>
+        <if test="goods.volume != null">
+            volume=#{goods.volume},
+        </if>
+        <if test="goods.beSpecial != null">
+            is_special=#{goods.beSpecial},
+        </if>
+        <if test="goods.specialFreightId">
+            special_freight_id=#{goods.specialFreightId},
+        </if>
+        <if test="goods.price">
+            price=#{goods.price},
+        </if>
+        id=#{goods.id}
+        where id=#{goods.id} and is_deleted=0
+    </update>
+    <update id="deleteGoodsById" parameterType="Integer">
+        update oomall_goods set is_deleted=1
+        where id=#{id} and is_deleted=0
+    </update>
+    <update id="changeCategory" parameterType="Integer">
+        update oomall_goods set goods_category_id=0
+        where goods_category_id=#{categoryId}
+    </update>
+    <update id="changeBrand" parameterType="Integer">
+        update oomall_goods set brand_id=0
+        where brand_id=#{brandId}
+    </update>
+    <insert id="insertGoods" parameterType="xmu.oomall.domain.goods.GoodsPo" keyProperty="id" useGeneratedKeys="true">
+        <selectKey resultType="Integer" order="AFTER" keyProperty="goods.id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into oomall_goods (name, goods_sn, short_name, description, brief,
+        pic_url, detail, status, share_url, gallery, goods_category_id, brand_id,
+        weight, volume, special_freight_id, is_special, price)
+        values(
+            #{goods.name},
+            #{goods.goodsSn},
+            #{goods.shortName},
+            #{goods.description},
+            #{goods.brief},
+            #{goods.picUrl},
+            #{goods.detail},
+            #{goods.statusCode},
+            #{goods.shareUrl},
+            #{goods.gallery},
+            #{goods.goodsCategoryId},
+            #{goods.brandId},
+            #{goods.weight},
+            #{goods.volume},
+            #{goods.specialFreightId},
+            #{goods.beSpecial},
+            #{goods.price})
+    </insert>
+</mapper>
