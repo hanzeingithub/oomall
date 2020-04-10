@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    druid:
+      #初始化时建立物理连接的个数
+      initial-size: 2
+      #  最小连接池数量
+      min-idle: 2
+      #最大连接池数量
+      max-active: 10
+      #获取连接时最大等待时间
+      max-wait: 60000
+      filter:
+        stat:
+          #是否开启慢sql查询监控
+          log-slow-sql: true
+          #慢SQL执行时间
+          slow-sql-millis: 100
+      validation-query: select 1

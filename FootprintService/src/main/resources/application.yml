@@ -1,0 +1,57 @@
+spring:
+  profiles:
+    active: log,db,mq
+  http:
+    converters:
+      preferred-json-mapper: gson
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
+  datasource:
+    url: jdbc:mysql://101.132.152.28:3306/oomall?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
+    username: oomall
+    password: OOAD3-4wmtnl
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+  application:
+    name: footprintService
+mybatis:
+  #domain对象的包
+  type-aliases-package: xmu.oomall.domain
+  #mapper.xml所在的位置
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    # 开启驼峰命名转换，如：Table(create_time) -> Entity(createTime)。不需要我们关心怎么进行字段匹配，mybatis会自动识别`大写字母与下划线`
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    cache-enabled: true
+server:
+  port: 3568
+#指定注册中心地址
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://47.100.91.153:3500/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    ip-address: ${spring.cloud.client.ip-address}
+feign:
+  hystrix:
+    enabled: false
+  client:
+    config:
+      share:
+        connectTimeout: 120000
+        readTimeout: 120000
+  compression:
+    request:
+      enabled: true
+      mime-types: text/html,application/xml,application/json
+      min-request-size: 2048
+    response:
+      enabled: true
+
+
+
